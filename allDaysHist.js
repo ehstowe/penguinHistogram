@@ -3,12 +3,11 @@ var classData = d3.json("classData.json");
 
 classData.then(function(data){
 
-  //var quizes = createList(data, 1)
   var day = 1;
   drawChart(data, day)
   var list=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
   11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37]
+23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
   var body=d3.select("body")
   body.selectAll("button")
       .data(list)
@@ -19,19 +18,11 @@ classData.then(function(data){
       .text(function(d){
         return d})
       .on("click", function(d,i){
-        console.log(this.value, "checking button.value")
-        console.log(d, "this is d")
         updateChart(data, this.value)})
-
-
       })
 
-
-
 var createList=function(data, day){
-  console.log("made it here")
   var quizes=[]
-  console.log(data, 'THIS IS DATA LOOK HERE')
 
     data.quizes.forEach(function(d){
       if (d.day===day)
@@ -52,7 +43,6 @@ var drawChart = function(classData, day){
 
   })
 
-
     var screen = {
       width: 500,
       height: 400
@@ -86,7 +76,6 @@ var binMaker=d3.histogram()
     .thresholds(xScale.ticks(10))
 
 var bins=binMaker(quizes);
-console.log(bins, "these are bins, take note")
 var svg = d3.select("#chart")
 .attr("width", screen.width)
 .attr("height", screen.height)
@@ -107,23 +96,20 @@ svg.selectAll('rect')
   })
   .attr("fill", "blue")
 
-
-
 var xAxis = d3.axisBottom(xScale);
     svg.append('g')
     .attr('id', 'xAxis')
     .call(xAxis)
-    .attr('transform', 'translate('+margin.left+','+(screen.height-margin.bottom-margin.top)+')')
+    .attr('transform', 'translate('+(margin.left)+','+(screen.height-margin.bottom-margin.top)+')')
 
 var yAxis = d3.axisLeft(yScale);
     svg.append('g')
     .call(yAxis)
-    .attr('transform', 'translate('+margin.left+','+(0)+')')
+    .attr('transform', 'translate('+(margin.left)+','+(0)+')')
     .attr()
 }
 
 var updateChart = function(classData, day){
-console.log(day)
   var quizes= []
   classData.forEach(function(d){
     d.quizes.forEach(function(d){
@@ -167,13 +153,15 @@ var binMaker=d3.histogram()
     .thresholds(xScale.ticks(10))
 
 var bins=binMaker(quizes);
-console.log(bins, "these are bins, take note")
 var svg = d3.select("#chart")
 .attr("width", screen.width)
 .attr("height", screen.height)
 
 svg.selectAll('rect')
   .data(bins)
+  .transition()
+  .duration(1000)
+  .ease(d3.easeLinear)
   .attr('x', function(d, i){
     return (margin.left-barWidth/2) + xScale(d.x0)
   })
@@ -185,6 +173,5 @@ svg.selectAll('rect')
     return height - yScale(d.length)
   })
   .attr("fill", "blue")
-
 
 }
